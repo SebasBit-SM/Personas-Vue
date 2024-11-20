@@ -69,3 +69,49 @@
       </div>
     </div>
   </template>
+
+<script>
+import axios from 'axios';
+import Swal from 'sweetalert2';
+
+export default {
+  name: 'EditarComuna',
+  data() {
+    return {
+      comuna: {
+        comu_codi: 0,
+        comu_nomb: '',
+        muni_codi: 0,
+      },
+      municipios: [],
+      muni_codi: '0',
+    };
+  },
+  methods: {
+    cancel() {
+      this.$router.push({ name: 'Comunas' });
+    },
+    async saveComuna() {
+      this.comuna.muni_codi = this.muni_codi;
+      const res = await axios.post('http://127.0.0.1:8000/api/comunas/', this.comuna);
+      console.log(res);
+      if (res.status === 200) {
+        this.$router.push({ name: 'Comunas' });
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: 'Comuna has been saved',
+          showConfirmButton: false,
+          timer: 2000,
+        });
+      }
+    },
+  },
+  mounted() {
+    axios.get('http://127.0.0.1:8000/api/municipios/')
+      .then((response) => {
+        this.municipios = response.data.municipios;
+      });
+  },
+};
+</script>
