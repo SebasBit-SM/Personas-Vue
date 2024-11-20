@@ -36,11 +36,11 @@
             </tbody>
         </table>
     </div>
-
 </template>
 
 <script>
 import axios from 'axios'
+import Swal from 'sweetalert2'
 export default {
 
     name: 'Comuna',
@@ -49,10 +49,38 @@ export default {
             comunas: []
         }
     },
+    methods: {
+        deleteComuna(codigo){
+            Swal.fire({
+                title: `Do you want to delete the Comuna with id ${codigo}?`,
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    //Swal.fire('Saved!', '', 'succes')
+                    axios.delete(`http://127.0.0.1:8000/api/comunas/${codigo}`)
+                    .then(response => {
+                        if (response.data.succes){
+                            Swal.fire('Deleted!! ', '', 'succes')
+                            this.comunas = response.data.comunas
+                        }
+                    })
+                }
+            })
+        },
+
+        editComuna(id){
+            this.$router.push({name: 'EditarComuna', params: { id: `${id}` }} )
+        },
+        newComuna(){
+            this.$router.push({name: 'NewComuna'});
+        }
+    },
     mounted(){
         axios
             .get('http://127.0.0.1:8000/api/comunas')
             .then(response => (this.comunas = response.data.comunas))
-    }
+    },
 }
 </script>
